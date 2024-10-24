@@ -23,13 +23,13 @@ exports.register = async (req, res) => {
 // User login
 exports.login = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const { email, password } = req.body; // Change from username to email
+    const user = await User.findOne({ email }); // Search for user by email
     
     if (user && (await user.comparePassword(password))) {
       const token = jwt.sign(
-        { id: user._id, username: user.username, type: user.type }, 
-        process.env.JWT_SECRET, 
+        { id: user._id, email: user.email, type: user.type }, // Update payload to include email
+        process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
       res.status(200).json({ token, message: 'Login successful' });
@@ -40,3 +40,4 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Login failed', error });
   }
 };
+

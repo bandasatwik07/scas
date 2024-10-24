@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import login from './components/Auth/Signin';
-import register from './components/Auth/Signup';
+import Login from './components/Auth/Signin';
+import Signup from './components/Auth/Signup';
 import Home from './components/Home';
 import CabBooking from './components/CabBooking';
 import NearbyCabs from './components/NearbyCabs';
@@ -19,9 +19,9 @@ const App = () => {
           <Routes>
             {/* Correcting the element attribute for routes */}
             {/* <Route path="/signin" element={<Signin onLogin={(token) => setToken(token)} />} /> */}
-            <Route path="/signup" element={<register />} />
-            <Route path="/signin" element={<login />} />
-            <Route path="/book-cab" element={<CabBooking />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<Login />} />
+            <Route path="/book-cab/:cabId" element={<CabBooking />} />
             <Route path="/nearby-cabs" element={<NearbyCabs />} />
             <Route path="/trip-history" element={<TripHistory />} />
             <Route path="/driver/:driverId" element={<DriverDetails />} />

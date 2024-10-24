@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },         // New field for name
   phone: { type: String, required: true },        // New field for phone number
   email: { type: String, required: true, unique: true },  // New field for email
-  type: { type: Number, enum: [0, 1], required: true },   // New field for user type (0 for user, 1 for driver)
+  type: { type: Number, enum: [0, 1, 2], required: true },   // New field for user type (0 for user, 1 for driver, 2 for the admin)
   currentTripId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Trip' 

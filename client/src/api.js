@@ -4,12 +4,12 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 // User signup
 export const signup = async (userData) => {
-  return await axios.post(`${API_URL}/auth/register`, userData);
+  return await axios.post(`${API_URL}/auth/signup`, userData);
 };
 
 // User signin
 export const signin = async (userData) => {
-  return await axios.post(`${API_URL}/auth/login`, userData);
+  return await axios.post(`${API_URL}/auth/signin`, userData);
 };
 
 // Get nearby cabs within a 5km radius

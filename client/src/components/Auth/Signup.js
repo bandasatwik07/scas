@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Updated to useNavigate
+import { signup } from '../../api'; // Import the signup function from your API file
 import '../styles/signup.css';
 
 const Signup = () => {
@@ -20,26 +21,29 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
+      // Use the signup function with Axios
+      const response = await signup(formData);
+  
+      // Check for a successful response status
+      if (response.status === 201) { // Update to check for 201 instead of 200
         // Redirect to login page after successful signup
-        navigate('/signin'); // Updated to use navigate
+        navigate('/signin'); // Redirect on success
       } else {
         setErrorMessage('Failed to register. Please check your details.');
       }
     } catch (error) {
       console.error('Error:', error);
-      setErrorMessage('Something went wrong, please try again.');
+      // Axios error handling
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data.message || 'Something went wrong, please try again.');
+      } else {
+        setErrorMessage('Something went wrong, please try again.');
+      }
     }
   };
+  
 
   return (
     <div className="signup-container">
