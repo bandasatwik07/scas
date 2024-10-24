@@ -34,10 +34,8 @@ const Home = () => {
     <div style={styles.container}>
       <h1 style={styles.header}>Welcome to Smart Cab Allocation System</h1>
       <div>
-        <Link to="/book-cab" style={styles.link}>Book a Cab</Link> |
-        <Link to="/nearby-cabs" style={styles.link}>Nearby Cabs</Link> |
-        <Link to="/trip-history" style={styles.link}>Trip History</Link> |
-        <Link to="/plan-ride" style={styles.link}>Plan Your Ride</Link>
+        {/* <Link to="/book-cab" style={styles.link}>Book a Cab</Link> | */}
+        <Link to="/nearby-cabs" style={styles.link}>Nearby Cabs</Link> 
       </div>
     </div>
   );

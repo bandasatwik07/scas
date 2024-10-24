@@ -1,3 +1,4 @@
+
 const Cab = require('../models/cabModel');
 const User = require('../models/userModel'); // Import the User model to fetch driver details
 
@@ -44,10 +45,9 @@ exports.addNewCab = async (req, res) => {
 // Allocate the selected cab
 exports.allocateSelectedCab = async (req, res) => {
   try {
-    const { cabId } = req.body; // Cab ID selected by the user
+    const { cabId, destinationLat, destinationLng } = req.body; // Cab ID and new destination coordinates
 
     // Find the cab by its ID
-    console.log(req);
     const selectedCab = await Cab.findById(cabId);
 
     if (!selectedCab) {
@@ -59,15 +59,23 @@ exports.allocateSelectedCab = async (req, res) => {
       return res.status(400).json({ message: 'Cab is already allocated' });
     }
 
-    // Mark the cab as unavailable
+    // Mark the cab as unavailable and update its location to the new destination
     selectedCab.available = false;
+    selectedCab.location = {
+      type: 'Point',
+      coordinates: [destinationLng, destinationLat], // Set the cab's location to the destination coordinates
+    };
+
+    // Save the updated cab information
     await selectedCab.save();
 
-    res.status(200).json({ message: 'Cab successfully allocated', cab: selectedCab });
+    res.status(200).json({ message: 'Cab successfully allocated and location updated', cab: selectedCab });
   } catch (error) {
+    console.error('Error allocating cab:', error);
     res.status(500).json({ message: 'Error allocating cab', error });
   }
 };
+
 
 exports.getCabsInRadius = async (req, res) => {
   try {
@@ -78,7 +86,6 @@ exports.getCabsInRadius = async (req, res) => {
 
     // Find available cabs within the specified radius using geospatial queries
     const cabsInRadius = await Cab.find({
-      available: true,
       location: {
         $geoWithin: {
           $centerSphere: [[lng, lat], radiusInKm / 6378.1] // Convert km to radians
@@ -111,6 +118,8 @@ exports.getCabsInRadius = async (req, res) => {
     res.status(500).json({ message: 'Error fetching cabs', error });
   }
 };
+
+
 
 // Helper function: Haversine formula to calculate distance between two locations
 const haversineDistance = (lat1, lng1, lat2, lng2) => {

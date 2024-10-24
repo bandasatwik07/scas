@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { bookCab } from '../api';
 
 const CabBooking = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // Initialize useNavigate hook
   const { cabId, currentLocation } = location.state || {};
 
   // Initial state for trip details with the current pickup location filled in
@@ -29,6 +30,11 @@ const CabBooking = () => {
       // Check if the response indicates success
       if (response.status === 200) {
         setMessage('Cab booked successfully!');
+        
+        // Redirect to home page after 1 second for better UX
+        setTimeout(() => {
+          navigate('/'); // Redirect to the home page
+        }, 1000);
       } else {
         setMessage('Failed to book the cab.');
       }
