@@ -14,7 +14,7 @@ npm package manager
 mongoDB Database
 
 Getting Started
-git clone https://github.com/bandasatwik07/SmartCabAllocationSystem.git
+git clone https://github.com/bandasatwik07/scas.git
 cd SCAS
 
 
