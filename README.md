@@ -9,24 +9,38 @@ https://drive.google.com/file/d/1p2RqvygbgDz3fU9VBltQI9CMLx1CC9vp/view?usp=drive
 
 
 *Prerequisites*
+
 Node.js installed on your machine
+
 npm package manager
+
 mongoDB Database
 
+
 Getting Started
+
 git clone https://github.com/bandasatwik07/scas.git
+
 cd SCAS
 
 
 Client
+
 cd client
+
 npm install
+
 npm start
+
 The app will be available at http://localhost:3000.
 
 
 Backend
+
 cd ../backend
+
 npm install
+
 node index.js
+
 The server will be running at http://localhost:5000.
