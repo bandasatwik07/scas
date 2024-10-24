@@ -17,14 +17,20 @@ npm package manager
 mongoDB Database
 
 
-Getting Started
+
+
+
+**Getting Started**
 
 git clone https://github.com/bandasatwik07/scas.git
 
 cd SCAS
 
 
-Client
+
+
+
+**Client**
 
 cd client
 
@@ -35,7 +41,10 @@ npm start
 The app will be available at http://localhost:3000.
 
 
-Backend
+
+
+
+**Backend**
 
 cd ../backend
 
