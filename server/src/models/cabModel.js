@@ -3,8 +3,15 @@ const mongoose = require('mongoose');
 const cabSchema = new mongoose.Schema({
   cabId: { type: String, required: true, unique: true },
   location: {
-    lat: { type: Number, required: true },
-    lng: { type: Number, required: true }
+    type: {
+      type: String, // 'Point' for 2D index
+      enum: ['Point'], // Mongoose will enforce this
+      required: true
+    },
+    coordinates: {
+      type: [Number], // [lng, lat] (longitude first)
+      required: true
+    }
   },
   available: { type: Boolean, default: true },
   currentTripId: { 
@@ -18,6 +25,8 @@ const cabSchema = new mongoose.Schema({
   }
 });
 
+// Create a geospatial index
+cabSchema.index({ location: '2dsphere' });
 
 const Cab = mongoose.model('Cab', cabSchema);
 

@@ -47,6 +47,7 @@ exports.allocateSelectedCab = async (req, res) => {
     const { cabId } = req.body; // Cab ID selected by the user
 
     // Find the cab by its ID
+    console.log(req);
     const selectedCab = await Cab.findById(cabId);
 
     if (!selectedCab) {
@@ -71,22 +72,42 @@ exports.allocateSelectedCab = async (req, res) => {
 exports.getCabsInRadius = async (req, res) => {
   try {
     const { lat, lng } = req.body; // User's location (latitude and longitude)
+    const radiusInKm = 50; // Radius in kilometers
 
-    // Find available cabs
-    const availableCabs = await Cab.find({ available: true });
+    console.log("Request received:", req.body);
 
-    // Filter cabs within 5 km radius
-    const cabsInRadius = availableCabs.filter(cab => {
-      const distance = haversineDistance(lat, lng, cab.location.lat, cab.location.lng);
-      return distance <= 500; // Corrected to 5km radius
+    // Find available cabs within the specified radius using geospatial queries
+    const cabsInRadius = await Cab.find({
+      available: true,
+      location: {
+        $geoWithin: {
+          $centerSphere: [[lng, lat], radiusInKm / 6378.1] // Convert km to radians
+        }
+      }
     });
 
-    if (cabsInRadius.length > 0) {
-      res.status(200).json(cabsInRadius);
-    } else {
-      res.status(404).json({ message: 'No cabs found within 5km radius' });
+    console.log("Cabs found with geospatial query:", cabsInRadius);
+
+    // If no cabs found with geospatial query, respond with 404
+    if (cabsInRadius.length === 0) {
+      return res.status(404).json({ message: 'No cabs found within 50km radius' });
     }
+
+    // Create an array with cab details including distance
+    const cabsWithDistance = cabsInRadius.map(cab => {
+      const distance = haversineDistance(lat, lng, cab.location.coordinates[1], cab.location.coordinates[0]);
+      return { ...cab.toObject(), distance }; // Include distance in the response
+    });
+
+    // Sort the cabs by distance in ascending order
+    cabsWithDistance.sort((a, b) => a.distance - b.distance);
+
+    console.log("Cabs with distance and sorted:", cabsWithDistance);
+
+    // Send the sorted cabs with distances in the response
+    res.status(200).json(cabsWithDistance);
   } catch (error) {
+    console.error('Error fetching cabs:', error);
     res.status(500).json({ message: 'Error fetching cabs', error });
   }
 };
@@ -107,4 +128,5 @@ const haversineDistance = (lat1, lng1, lat2, lng2) => {
 
   return R * c; // Distance in km
 };
+
 

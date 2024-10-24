@@ -1,14 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { bookCab } from '../api';
 
-const CabBooking = ({ cabId }) => {
-  const [tripDetails, setTripDetails] = useState({ destination: '', pickupTime: '' });
+const CabBooking = () => {
+  const location = useLocation();
+  const { cabId, currentLocation } = location.state || {};
+
+  // Initial state for trip details with the current pickup location filled in
+  const [tripDetails, setTripDetails] = useState({
+    destinationLat: '',
+    destinationLng: '',
+    pickupLat: currentLocation?.lat || '', // Fill with current location latitude
+    pickupLng: currentLocation?.lng || '', // Fill with current location longitude
+  });
   const [message, setMessage] = useState('');
 
+  // Handle book button click
   const handleBook = async () => {
     try {
-      await bookCab(cabId, tripDetails);
-      setMessage('Cab booked successfully!');
+      // Call the API function with cabId and trip details
+      const response = await bookCab(cabId, {
+        destinationLat: tripDetails.destinationLat,
+        destinationLng: tripDetails.destinationLng,
+        pickupLat: tripDetails.pickupLat,
+        pickupLng: tripDetails.pickupLng,
+      });
+
+      // Check if the response indicates success
+      if (response.status === 200) {
+        setMessage('Cab booked successfully!');
+      } else {
+        setMessage('Failed to book the cab.');
+      }
     } catch (err) {
       setMessage('Failed to book the cab.');
     }
@@ -33,7 +56,7 @@ const CabBooking = ({ cabId }) => {
       border: '1px solid #ccc',
     },
     button: {
-      padding: '10px 20px',
+      padding: '10px',
       backgroundColor: '#007BFF',
       color: '#fff',
       fontSize: '1rem',
@@ -41,9 +64,7 @@ const CabBooking = ({ cabId }) => {
       border: 'none',
       cursor: 'pointer',
       marginTop: '10px',
-    },
-    buttonHover: {
-      backgroundColor: '#0056b3',
+      width: '300px',
     },
     message: {
       marginTop: '15px',
@@ -53,18 +74,33 @@ const CabBooking = ({ cabId }) => {
 
   return (
     <div style={styles.container}>
-      <h2>Book Cab</h2>
+      <h2>Book Your Cab</h2>
       <input
         type="text"
-        placeholder="Destination"
-        value={tripDetails.destination}
-        onChange={(e) => setTripDetails({ ...tripDetails, destination: e.target.value })}
+        placeholder="Pickup Latitude"
+        value={tripDetails.pickupLat}
+        readOnly // Auto-filled, no changes allowed
         style={styles.input}
       />
       <input
-        type="datetime-local"
-        value={tripDetails.pickupTime}
-        onChange={(e) => setTripDetails({ ...tripDetails, pickupTime: e.target.value })}
+        type="text"
+        placeholder="Pickup Longitude"
+        value={tripDetails.pickupLng}
+        readOnly // Auto-filled, no changes allowed
+        style={styles.input}
+      />
+      <input
+        type="text"
+        placeholder="Destination Latitude"
+        value={tripDetails.destinationLat}
+        onChange={(e) => setTripDetails({ ...tripDetails, destinationLat: e.target.value })}
+        style={styles.input}
+      />
+      <input
+        type="text"
+        placeholder="Destination Longitude"
+        value={tripDetails.destinationLng}
+        onChange={(e) => setTripDetails({ ...tripDetails, destinationLng: e.target.value })}
         style={styles.input}
       />
       <button onClick={handleBook} style={styles.button}>
